@@ -14,23 +14,24 @@ class LocationMapPage extends StatefulWidget {
 class _LocationMapPageState extends State<LocationMapPage> {
   bool isLocationServiceEnabled = false;
   bool hasLocationPermission = false;
-  late LocationPermission locationPermission;
   late Position currentPosition;
-  static double latitude = 0.0;
-  static double longitude = 0.0;
-  late StreamSubscription<Position> positionStream;
+  late double latitude;
+  late double longitude;
+  StreamSubscription<Position>? positionStream;
   late GoogleMapController mapController;
   final Map<String, Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
+    latitude = 37.43296265331129;
+    longitude = -122.08832357078792;
     getLocation();
   }
 
   @override
   void dispose() {
-    positionStream.cancel();
+    positionStream!.cancel();
     super.dispose();
   }
 
@@ -64,7 +65,10 @@ class _LocationMapPageState extends State<LocationMapPage> {
     final currentLocation = LatLng(latitude, longitude);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
+        elevation: 0,
+      ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: currentLocation,

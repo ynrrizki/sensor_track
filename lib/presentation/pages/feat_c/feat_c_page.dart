@@ -15,64 +15,34 @@ class FeatCPage extends StatefulWidget {
 class _FeatCPageState extends State<FeatCPage> {
   bool serviceStatus = false;
   bool hasPermission = false;
-  late LocationPermission permission;
   late Position position;
-  static double lat = lat;
-  static double long = long;
+  late double latitude;
+  late double longitude;
   late StreamSubscription<Position> positionStream;
   @override
   void initState() {
-    checkGPS();
+    latitude = 37.43296265331129;
+    longitude = -122.08832357078792;
+    getLocation();
     super.initState();
   }
 
-  checkGPS() async {
-    serviceStatus = await Geolocator.isLocationServiceEnabled();
-    if (serviceStatus) {
-      permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          debugPrint('Location permissions are denied');
-        } else if (permission == LocationPermission.deniedForever) {
-          debugPrint('Location permissions are permanently denied');
-        } else {
-          hasPermission = true;
-        }
-      } else {
-        hasPermission = true;
-      }
+  void getLocation() async {
+    await Geolocator.checkPermission();
+    await Geolocator.requestPermission();
 
-      if (hasPermission) {
-        setState(() {
-          //refresh the UI
-        });
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    latitude = position.latitude;
+    longitude = position.longitude;
 
-        getLocation();
-      }
-    } else {
-      debugPrint("GPS Service is not enabled, turn on GPS location");
-    }
-
-    setState(() {
-      //refresh the UI
-    });
-  }
-
-  getLocation() async {
-    position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    long = position.longitude;
-    lat = position.latitude;
-
-    setState(() {
-      //refresh UI
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    LatLng currentLocation = LatLng(lat, long);
+    LatLng currentLocation = LatLng(latitude, longitude);
     return Scaffold(
       backgroundColor: Colors.blue[100],
       body: ListView(
